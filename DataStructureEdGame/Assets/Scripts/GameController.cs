@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 /**
  * Where all global references and important game logic is.
- */ 
+ */
 public class GameController : MonoBehaviour {
 
     public enum WinCondition
@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour {
     public LoggingManager loggingManager; // set in unity editor
     public WorldGenerationBehavior worldGenerator; // set in unity editor
     public HUDBehavior hudBehavior; // set in unity editor
+
 
     [Header("Debugging")]
     public long debugFrameCount; // so log messages can be unique by appending what frame the game is on.
@@ -39,7 +40,7 @@ public class GameController : MonoBehaviour {
     public CodePanelBehavior codePanelBehavior;
     public InstructionScreensBehavior instructionScreenBehavior;
 
-    [Header("PreFabs and Game Objects")] 
+    [Header("PreFabs and Game Objects")]
     public Transform linePreFab;
     public Transform deleteXPreFab;
     public Transform cameraRef;
@@ -60,10 +61,10 @@ public class GameController : MonoBehaviour {
     public LinkBehavior startingLink;
     public LinkBehavior selectedLink;
     public LinkBehavior hoverLink;
-    private List<LinkBehavior> mouseOverLinkRefs; // the link block the mouse is hovering over. 
-    
+    private List<LinkBehavior> mouseOverLinkRefs; // the link block the mouse is hovering over.
+
     public DateTime lastTimeClickedMillis;// a queue of platforms that may be added in this level
-    public List<PlatformBehavior> platformsToAdd; 
+    public List<PlatformBehavior> platformsToAdd;
     public bool addingPlatforms = false; // whether the player is currently in an the Add Platform mode.
 
     private List<ObjectiveBlockBehavior> objectiveBlocks; // a referernce to all objective entities in the level
@@ -73,7 +74,7 @@ public class GameController : MonoBehaviour {
     void Start()
     {
         debugFrameCount = 0;
-        
+
         selectedLink = null;
         hoverLink = null;
 
@@ -82,6 +83,7 @@ public class GameController : MonoBehaviour {
         worldGenerator.setGameController(this);
         hudBehavior.setGameController(this);
         hudBehavior.setLoggingManager(loggingManager);
+
         gameCanvas = hudBehavior.GetComponent<Canvas>();
 
         // set the game to its initial state
@@ -111,7 +113,7 @@ public class GameController : MonoBehaviour {
 
         Vector3 mousePointInWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePointInWorld.z = 0;
-        // add platform system 
+        // add platform system
         if (addingPlatforms && platformsToAdd.Count > 0)
         {
             PlatformBehavior platformToPreviewForAdd = platformsToAdd[0];  // show a preview of the platform.
@@ -130,7 +132,7 @@ public class GameController : MonoBehaviour {
                 {
                     selectedLink.setPreviewConnection(null);
                     selectedLink.setState(LinkBehavior.State.NORMAL);
-                    selectedLink = null; 
+                    selectedLink = null;
                 }
             }
             else if (selectedLink != null && Input.GetMouseButton(0)) // dragging from a link.
@@ -147,10 +149,10 @@ public class GameController : MonoBehaviour {
                 platformToPreviewForAdd.isInLevel = true; // set as being added to the level.
                 platformToPreviewForAdd.GetComponent<ContainerEntityBehavior>().refreshChildList();
                 selectedLink.setConnectionTo(platformToPreviewForAdd.GetComponent<ConnectableEntityBehavior>()); // connect the selected link to the new platform
-                platformToPreviewForAdd.updateRenderAndState(); // force rendering update. 
+                platformToPreviewForAdd.updateRenderAndState(); // force rendering update.
                 addingPlatforms = false;
                 codePanelBehavior.appendCodeText(selectedLink.getVariableName() + " = new Node();"); // append code to the generated code window.
-                
+
                 string actMsg = "Platform is added from link " + selectedLink.GetComponent<LoggableBehavior>().getLogID() + " at (" + mousePointInWorld.x + ", " + mousePointInWorld.y + ")";
                 loggingManager.sendLogToServer(actMsg);
 
@@ -167,7 +169,7 @@ public class GameController : MonoBehaviour {
 
         if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(0))   // the state of clicking has not changed this frame.
         {
-            hoverLink = null; // to make sure it is properly updated this next frame. 
+            hoverLink = null; // to make sure it is properly updated this next frame.
         }
         // if it is a hover link and the mouse is released, then check to establish a connection.
         mousePointInWorld.z = 0;
@@ -262,7 +264,7 @@ public class GameController : MonoBehaviour {
         {
             hoverLink = null;
         }
-        
+
 
         // record the last time that the mouse clicked for double clicking
         if (Input.GetMouseButton(0))
@@ -274,7 +276,7 @@ public class GameController : MonoBehaviour {
     /**
      * Returns whether or not this level's win condition has been
      * satisfied based on the current world state.
-     */ 
+     */
     bool isWinConditonSatisfied()
     {
         if (winConditon == WinCondition.None)
@@ -339,10 +341,10 @@ public class GameController : MonoBehaviour {
                     }
                     ContainerEntityBehavior next = temp.GetChildComponent<LinkBehavior>().connectableEntity.GetComponent<ContainerEntityBehavior>();
                     next.refreshChildList();
-                    
-                    if (((winConditon == WinCondition.SortListAscending || winConditon == WinCondition.SortListDuplicatesNotAllBlocks) && 
+
+                    if (((winConditon == WinCondition.SortListAscending || winConditon == WinCondition.SortListDuplicatesNotAllBlocks) &&
                             next.GetChildComponent<ValueBehavior>().getValue() < temp.GetChildComponent<ValueBehavior>().getValue()) ||
-                        (winConditon == WinCondition.SortListDescending && 
+                        (winConditon == WinCondition.SortListDescending &&
                             next.GetChildComponent<ValueBehavior>().getValue() > temp.GetChildComponent<ValueBehavior>().getValue()))
                     {
                         return false; // not sorted.
@@ -355,20 +357,20 @@ public class GameController : MonoBehaviour {
         return false;
     }
 
-    
+
 
     /**
      * This will update the objective block states based on the win condition.
      * It will also update the HUD for saying what the objective is and its state.
-     */ 
+     */
     public void updateObjectiveHUDAndBlocks()
     {
         if (winConditon != WinCondition.None)
         {
-            bool isWinSatisfied = isWinConditonSatisfied(); 
+            bool isWinSatisfied = isWinConditonSatisfied();
             if (winConditon == WinCondition.SortListAscending)
             {
-                if (isWinSatisfied) 
+                if (isWinSatisfied)
                     hudBehavior.setObjectiveHUD("Sort the list in increasing order while including all Platforms.\nThe List is sorted!", true, isWinSatisfied);
                 else
                     hudBehavior.setObjectiveHUD("Sort the list in increasing order while including all Platforms.\nThe List is not sorted.", true, isWinSatisfied);
@@ -394,13 +396,13 @@ public class GameController : MonoBehaviour {
             }
         } else
         {
-            hudBehavior.setObjectiveHUD("", false, false); 
+            hudBehavior.setObjectiveHUD("", false, false);
         }
     }
 
     /**
      * Update the rendering and state information of all platforms.
-     */ 
+     */
     public void updatePlatformEntities()
     {
         foreach (PlatformBehavior pb in platformEntities)
@@ -413,7 +415,7 @@ public class GameController : MonoBehaviour {
 
     /**
      * Set the cursor to its default icon.
-     */ 
+     */
     private void setCursorToDefault()
     {
         Cursor.SetCursor(null, new Vector2(), cursorMode);
@@ -429,7 +431,7 @@ public class GameController : MonoBehaviour {
 
     /**
      * Set the cursor to a dragging icon.
-     */ 
+     */
     private void setCursorToDragging()
     {
         Cursor.SetCursor(cursorDraggingTexture, new Vector2(18, 8), cursorMode);
@@ -487,7 +489,7 @@ public class GameController : MonoBehaviour {
 
     /**
      * Get the size of the list entity in the current level.
-     */ 
+     */
     public int getSizeOfList()
     {
         List<ContainerEntityBehavior> visited = new List<ContainerEntityBehavior>();
@@ -508,7 +510,7 @@ public class GameController : MonoBehaviour {
             }
             visited.Add(temp);
             temp = next;
-            sizeOfList++; 
+            sizeOfList++;
         }
         return sizeOfList;
     }
@@ -518,4 +520,3 @@ public class GameController : MonoBehaviour {
         return lastTimeClickedMillis.Millisecond - System.DateTime.Now.Millisecond;
     }
 }
-

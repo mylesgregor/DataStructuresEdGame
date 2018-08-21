@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Assets.Scripts.WorldGeneration;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
+
 
 /**
  * Handles all world and level generation from given level description files.
@@ -14,7 +16,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
     private GameController gameController;
 
     [Header("World generation files and options")]
-    public int levelFileIndex;  // which level you are currently playing. This starts from 0 and 
+    public int levelFileIndex;  // which level you are currently playing. This starts from 0 and
                                 // goes until the size of the level description files array minus one.
     public TextAsset[] levelDescriptionJsonFiles; // an array of level files. The order of this array determines the order of levels.
     public bool generateWorld; // whether to generate the world or not
@@ -38,6 +40,12 @@ public class WorldGenerationBehavior : MonoBehaviour {
     public Transform helicopterRobotPreFab;
 
     private bool busy;
+
+    //where in CSV
+    private int currentLineCSV = 0;
+
+    private string savePlayerID;
+    private string saveLevelID;
 
     public void ManualStartGenerator()
     {
@@ -105,10 +113,10 @@ public class WorldGenerationBehavior : MonoBehaviour {
                     objToInstances = groundTopPreFab; // render it with details on top of the block.
                 }
                 Transform obj = Instantiate(objToInstances, blockPos, Quaternion.identity);
-                Vector2 sizeOfBlock = new Vector3((int)level.blocks[i].width, (int)level.blocks[i].height); 
+                Vector2 sizeOfBlock = new Vector3((int)level.blocks[i].width, (int)level.blocks[i].height);
                 obj.GetComponent<SpriteRenderer>().size = sizeOfBlock;
                 obj.GetComponent<BoxCollider2D>().size = sizeOfBlock;
-                obj.GetComponent<LoggableBehavior>().setLogID(level.blocks[i].logId); // ground block 
+                obj.GetComponent<LoggableBehavior>().setLogID(level.blocks[i].logId); // ground block
                 levelEntities.Add(obj);
             }
 
@@ -118,6 +126,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
         if (level.player != null)
         {
             Vector2 loc = new Vector2((float)(level.player.x + (1 / 2f)), (float)(level.player.y - (1 / 2f)));
+
             gameController.playerRef = Instantiate(playerPreFab, loc, Quaternion.identity);
             gameController.playerRef.GetComponent<PlayerBehavior>().gameController = gameController;
             gameController.playerRef.GetComponent<LoggableBehavior>().setLogID(level.player.logId);
@@ -143,16 +152,16 @@ public class WorldGenerationBehavior : MonoBehaviour {
             robotBehavior.targetLocation = robot.position;
             robotBehavior.GetComponent<LoggableBehavior>().setLogID(level.helicopterRobot.logId);
 
-            gameController.helicopterRobotRef = robot; 
+            gameController.helicopterRobotRef = robot;
             robotBehavior.GetComponent<ContainerEntityBehavior>().refreshChildList();
             robotBehavior.getChildLink().GetComponent<LoggableBehavior>().setLogID("helicopter");
             robotBehavior.getChildLink().type = LinkBehavior.Type.HELICOPTER;
             robotBehavior.getChildLink().setVariableName("temp");
-            robotBehavior.getChildLink().setContainerEntity(robot.GetComponent<ContainerEntityBehavior>()); 
+            robotBehavior.getChildLink().setContainerEntity(robot.GetComponent<ContainerEntityBehavior>());
             levelEntities.Add(robot);
             levelLinks.Add(robotBehavior.GetComponent<ContainerEntityBehavior>().GetChildComponent<LinkBehavior>());
         }
-        
+
         // corresponding list of IDs telling the link blocks what they should point to when the level is generated
         List<string> levelLinksConnIds = new List<string>();
         List<LinkBehavior> levelLinkComps = new List<LinkBehavior>();
@@ -170,7 +179,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
             startLinkBehavior.type = LinkBehavior.Type.START;
             startLinkBehavior.defaultSprite = startLinkBlockSprite;
             startLinkBehavior.nullSprite = nullStartLinkBlockSprite;
-            startLinkBehavior.GetComponent<LoggableBehavior>().setLogID(level.startLink.logId); 
+            startLinkBehavior.GetComponent<LoggableBehavior>().setLogID(level.startLink.logId);
 
             startLinkBehavior.GetComponent<SpriteRenderer>().sprite = startLinkBlockSprite;
             gameController.startingLink = startLinkBehavior; // set start link reference
@@ -178,7 +187,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
             levelEntities.Add(startLinkTran);
 
             levelLinksConnIds.Add(level.startLink.objIDConnectingTo);
-            levelLinkComps.Add(startLinkBehavior); 
+            levelLinkComps.Add(startLinkBehavior);
         }
 
         Debug.Log("Loading external link blocks");
@@ -189,7 +198,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
             Transform newLink = Instantiate(linkBlockPreFab, loc, Quaternion.identity);
             newLink.position = newLink.position + (new Vector3(0,0,-5));
             LinkBehavior lb = newLink.GetComponent<LinkBehavior>();
-            lb.GetComponent<LoggableBehavior>().setLogID(level.linkBlocks[i].logId); 
+            lb.GetComponent<LoggableBehavior>().setLogID(level.linkBlocks[i].logId);
             levelLinks.Add(lb);
             levelEntities.Add(newLink);
 
@@ -247,7 +256,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
             newPlat.isInLevel = !level.singleLinkedListPlatforms[i].toAdd;
             if (level.singleLinkedListPlatforms[i].toAdd == true)
             {
-                newLLPlatform.gameObject.SetActive(false); 
+                newLLPlatform.gameObject.SetActive(false);
                 gameController.platformsToAdd.Add(newPlat);
             }
         }
@@ -255,7 +264,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
         Debug.Log("Completed loading " + listPlatformMap.Count + " platforms");
 
         Debug.Log("Establishing links ");
-        // establishing links for the link blocks with the platforms 
+        // establishing links for the link blocks with the platforms
         for (int i = 0; i < levelLinksConnIds.Count; i++)
         {
             if (levelLinksConnIds[i] != null && levelLinksConnIds[i].Length > 0) // if this link has a connection.
@@ -265,7 +274,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
                 {
                     // establish the connection
                     levelLinkComps[i].ensureReferences();
-                    levelLinkComps[i].setConnectionTo(listPlatformMap[platformId].GetComponent<ConnectableEntityBehavior>()); 
+                    levelLinkComps[i].setConnectionTo(listPlatformMap[platformId].GetComponent<ConnectableEntityBehavior>());
                 }
             }
         }
@@ -283,14 +292,14 @@ public class WorldGenerationBehavior : MonoBehaviour {
             {
                 lb.setVariableName("list.head");
             }
-            else 
+            else
             {
                 lb.setVariableName(varNames[varIndex++]);
             }
             lb.ensureReferences();
             lb.UpdateRendering();
         }
-        
+
         Debug.Log("Updating everything");
         // update the win conditions for the objective blocks
         gameController.setLevelObjectiveBlocksList(levelObjectiveBlocks);
@@ -315,7 +324,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
         }
 
         foreach (Transform t in levelEntities)
-        { 
+        {
             Destroy(t.gameObject);
         }
         gameController.clearReferenceLists(); // clear the references here
@@ -328,7 +337,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
             string actMsg = "level " + (levelFileIndex + 1) + " was created";
             gameController.loggingManager.sendLogToServer(actMsg);
         } else
-        { 
+        {
             string actMsg = "Game is won!";
             gameController.loggingManager.sendLogToServer(actMsg);
             gameController.hudBehavior.gameObject.SetActive(false);
@@ -346,4 +355,53 @@ public class WorldGenerationBehavior : MonoBehaviour {
     {
         return busy;
     }
-}
+// backwards = -1, forward = 1, init = 999
+    public void startDataVis(string playerID, string levelID, int movement)
+    {
+
+      if(playerID != "NULL" && levelID != "NULL")
+      {
+      savePlayerID = playerID;
+      saveLevelID = levelID;
+    }
+     /*
+      using (CsvReader csv =
+           new CsvReader(new StreamReader("/Users/CEI_BARNES_7/Desktop/OwenGameStudyData_July16/player_" + playerId +
+           "/gameLevel_tutorial2_lvl" + levelID + ".csv"), true))
+    {
+        int fieldCount = csv.FieldCount;
+
+        string[] headers = csv.GetFieldHeaders();
+        while (csv.ReadNextRecord())
+        {
+            for (int i = 0; i < fieldCount; i++)
+                Console.Write(string.Format("{0} = {1};",
+                              headers[i], csv[i]));
+            Console.WriteLine();
+        }
+    }
+      Debug.Log(playerID+1);
+      Debug.Log(levelID+2);
+*/
+
+      if(movement == 999)
+      {
+        //starting position
+      }
+      else {
+        if(currentLineCSV + movement >= 0 ) //&& <= CSV length
+          {
+            currentLineCSV += movement;
+            // TODO: new position
+          }
+      }
+
+Vector2 loc = new Vector2((float)(6.7), (float)(-12.7));
+    gameController.playerRef.position = loc;
+    }
+
+
+
+
+
+  }
