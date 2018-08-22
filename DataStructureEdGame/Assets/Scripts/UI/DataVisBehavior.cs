@@ -13,9 +13,6 @@ using System.IO;
 public class DataVisBehavior : MonoBehaviour {
 
 
-
-
-
 public GameController gameController;
 
 
@@ -23,13 +20,10 @@ public GameController gameController;
 
   private Button leftButton;
   private Button rightButton;
-
-
-
+ 
 
 
 	void Start () {
-
 
 
 
@@ -38,6 +32,7 @@ public GameController gameController;
 
         leftButton.onClick.AddListener(mapLeft);
         rightButton.onClick.AddListener(mapRight);
+
 
     }
 
@@ -52,5 +47,11 @@ public GameController gameController;
     {
       gameController.worldGenerator.startDataVis("NULL","NULL",1);
     }
+
+    /*   public void dataVisFreeze()
+ {
+     rb2.constraints = RigidbodyConstraints2D.FreezeAll;
+ }
+ */
 
 }

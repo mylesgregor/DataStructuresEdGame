@@ -355,53 +355,91 @@ public class WorldGenerationBehavior : MonoBehaviour {
     {
         return busy;
     }
-// backwards = -1, forward = 1, init = 999
+// backwards = -1, forward = 1
     public void startDataVis(string playerID, string levelID, int movement)
     {
+        
 
       if(playerID != "NULL" && levelID != "NULL")
       {
       savePlayerID = playerID;
       saveLevelID = levelID;
     }
-     /*
-      using (CsvReader csv =
-           new CsvReader(new StreamReader("/Users/CEI_BARNES_7/Desktop/OwenGameStudyData_July16/player_" + playerId +
-           "/gameLevel_tutorial2_lvl" + levelID + ".csv"), true))
-    {
-        int fieldCount = csv.FieldCount;
 
-        string[] headers = csv.GetFieldHeaders();
-        while (csv.ReadNextRecord())
+        try
         {
-            for (int i = 0; i < fieldCount; i++)
-                Console.Write(string.Format("{0} = {1};",
-                              headers[i], csv[i]));
-            Console.WriteLine();
+            String[] st = File.ReadAllLines("/Users/CEI_BARNES_7/Desktop/OwenGameStudyData_July16/player_" + savePlayerID +
+                                            "/gameLevel_tutorial2_lvl" + saveLevelID + ".csv");
+            Debug.Log(st[currentLineCSV]);
+
+            Debug.Log("Will this work?");
+            int findXIndex = st[currentLineCSV].IndexOf("\"\"logId\"\":\"\"player\"\",\"\"x\"\":", StringComparison.CurrentCulture);
+            Debug.Log(findXIndex);
+
+
+            int findYIndex = st[currentLineCSV].IndexOf("},\"\"helicopter\"\":{\"\"type\"\":", StringComparison.CurrentCulture);
+            Debug.Log(findYIndex);
+            string substr = st[currentLineCSV].Substring(findXIndex, findYIndex - findXIndex);
+
+            string xValstr = substr.Substring(27, 5); //  find X
+            if (!Char.IsDigit(xValstr[4]))
+                xValstr = xValstr.Remove(4, 1);
+            if (!Char.IsDigit(xValstr[3]))
+                xValstr = xValstr.Remove(3, 1);
+
+            string yValstr = substr.Substring(substr.IndexOf("y\"\":", StringComparison.CurrentCulture) + 4, substr.Length - substr.IndexOf("y\"\":", StringComparison.CurrentCulture) - 4);
+
+            double xVal = Double.Parse(xValstr);
+            double yVal = Double.Parse(yValstr);
+            Debug.Log(xVal);
+            Debug.Log(yVal);
+            Debug.Log(substr);
+
+    
+                if (currentLineCSV + movement >= 0 && currentLineCSV + movement < st.Length ) //&& <= CSV length
+                {
+                    Debug.Log("Test");
+                    currentLineCSV += movement;
+                // String substr = getBetween(st[currentLineCSV], "{\"type\":\"player\",\"logId\":\"player\",\"x\":", ",\"objIDConnectingTo\":\"sllp0\"}]");
+                //  Debug.Log(substr);
+                Vector2 loc = new Vector2((float)(xVal), (float)(yVal));
+                gameController.playerRef.position = loc;
+                
+
+
+            }
+
+
+        }
+
+        catch (Exception e)
+        {
+            Debug.Log("The file could not be read");
+            Debug.Log(e.Message);
+        }
+
+      
+
+      
+    }
+
+     string getBetween(string strSource, string strStart, string strEnd)
+    {
+        int Start, End;
+        if (strSource.Contains(strStart) && strSource.Contains(strEnd))
+        {
+            Start = strSource.IndexOf(strStart, 0) + strStart.Length;
+            End = strSource.IndexOf(strEnd, Start);
+            return strSource.Substring(Start, End - Start);
+        }
+        else
+        {
+            return "";
         }
     }
-      Debug.Log(playerID+1);
-      Debug.Log(levelID+2);
-*/
-
-      if(movement == 999)
-      {
-        //starting position
-      }
-      else {
-        if(currentLineCSV + movement >= 0 ) //&& <= CSV length
-          {
-            currentLineCSV += movement;
-            // TODO: new position
-          }
-      }
-
-Vector2 loc = new Vector2((float)(6.7), (float)(-12.7));
-    gameController.playerRef.position = loc;
-    }
 
 
 
 
 
-  }
+}

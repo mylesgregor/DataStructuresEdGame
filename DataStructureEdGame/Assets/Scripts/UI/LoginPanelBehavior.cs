@@ -133,7 +133,8 @@ public class LoginPanelBehavior : MonoBehaviour {
             //START DATA VIS
           //  Debug.Log(playerId);
           //  Debug.Log(levelID);
-          gameController.worldGenerator.startDataVis(playerId,levelID,999);
+                gameController.worldGenerator.startDataVis(playerId,levelID,0);
+                gameController.enableDataVis();
           }
           else
           {

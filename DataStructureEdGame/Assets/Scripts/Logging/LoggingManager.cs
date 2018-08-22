@@ -49,7 +49,7 @@ public class LoggingManager : MonoBehaviour
         using (UnityWebRequest www = UnityWebRequest.Post(sendLogDataUrl + "SendLogData.php", logForm))
         {
             yield return www.Send();
-            if (www.isError)
+            if (www.isNetworkError)
             {
                 Debug.Log("Error with sending the log message");
             }  
@@ -149,7 +149,7 @@ public class LoggingManager : MonoBehaviour
         using (UnityWebRequest www = UnityWebRequest.Post(loginAuthenticationUrl + "LoginAuthentication.php", loginForm))
         {
             yield return www.Send();
-            if (!www.isError)
+            if (!www.isNetworkError)
             {
                 loginAttemptResponse = www.downloadHandler.text;
             }
@@ -172,7 +172,7 @@ public class LoggingManager : MonoBehaviour
         using (UnityWebRequest www = UnityWebRequest.Post(updateLevelOnUrl + "UpdateLevelOn.php", logForm))
         {
             yield return www.Send();
-            if (www.isError)
+            if (www.isNetworkError)
             {
                 Debug.Log("Error with updating the level on.");
             }

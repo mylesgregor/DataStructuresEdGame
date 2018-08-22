@@ -70,7 +70,7 @@ public class PreviousInstructionsPanelBehavior : MonoBehaviour {
     {
         if (containerPanel == null)
         {
-            containerPanel = transform.FindChild("ContainerPanel").GetComponent<RectTransform>();
+            containerPanel = transform.Find("ContainerPanel").GetComponent<RectTransform>();
         }
     }
 }

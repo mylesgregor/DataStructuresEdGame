@@ -70,6 +70,8 @@ public class GameController : MonoBehaviour {
     private List<ObjectiveBlockBehavior> objectiveBlocks; // a referernce to all objective entities in the level
     private List<PlatformBehavior> platformEntities; // a reference to all platform entities in the level. TODO: generalize this?
 
+    private bool DataVis = false;
+
 
     void Start()
     {
@@ -519,4 +521,22 @@ public class GameController : MonoBehaviour {
     {
         return lastTimeClickedMillis.Millisecond - System.DateTime.Now.Millisecond;
     }
+
+    public void enableDataVis()
+    {
+        DataVis = true;
+    }
+
+    public void disableDataVis()
+    {
+        DataVis = false;
+
+    }
+
+    public bool checkDataVis()
+    {
+        return DataVis;
+    }
+
+
 }

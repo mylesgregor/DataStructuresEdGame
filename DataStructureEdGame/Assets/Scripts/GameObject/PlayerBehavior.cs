@@ -33,7 +33,11 @@ public class PlayerBehavior : MonoBehaviour
         rb2 = gameObject.GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         onGround = true; // initially assumed to not be on the ground. 
-	}
+        if (gameController.checkDataVis())
+            rb2.constraints = RigidbodyConstraints2D.FreezeAll;
+
+
+    }
 
     // Update is called once per frame
     void Update() {
@@ -192,4 +196,6 @@ public class PlayerBehavior : MonoBehaviour
         //Debug.Log("PLayer being shoved!:  " + sa.x + ", " + sa.y);
         shoveVector = sa;
     } 
+
+ 
 }
