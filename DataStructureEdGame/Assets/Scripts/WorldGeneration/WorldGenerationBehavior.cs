@@ -358,9 +358,11 @@ public class WorldGenerationBehavior : MonoBehaviour {
 // backwards = -1, forward = 1
     public void startDataVis(string playerID, string levelID, int movement)
     {
+        if (!gameController.checkDataVis())
+            gameController.enableDataVis();
         
 
-      if(playerID != "NULL" && levelID != "NULL")
+      if(playerID != "no" && levelID != "no")
       {
       savePlayerID = playerID;
       saveLevelID = levelID;
@@ -396,15 +398,29 @@ public class WorldGenerationBehavior : MonoBehaviour {
             Debug.Log(substr);
 
     
-                if (currentLineCSV + movement >= 0 && currentLineCSV + movement < st.Length ) //&& <= CSV length
+                if (currentLineCSV + movement >= 0 && currentLineCSV + movement < st.Length ) 
                 {
                     Debug.Log("Test");
                     currentLineCSV += movement;
-                // String substr = getBetween(st[currentLineCSV], "{\"type\":\"player\",\"logId\":\"player\",\"x\":", ",\"objIDConnectingTo\":\"sllp0\"}]");
-                //  Debug.Log(substr);
+
+
                 Vector2 loc = new Vector2((float)(xVal), (float)(yVal));
                 gameController.playerRef.position = loc;
                 
+
+
+            }
+
+         
+
+            if (st[currentLineCSV].IndexOf("won at time", StringComparison.CurrentCulture) != -1)
+
+            {
+                gameController.disableDataVis();
+
+                int lvl = int.Parse(saveLevelID);
+                saveLevelID = (lvl + 1).ToString();
+                currentLineCSV = 0;
 
 
             }

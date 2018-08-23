@@ -27,25 +27,43 @@ public GameController gameController;
 
 
 
-        leftButton = transform.Find("Left").GetComponent<Button>();
-        rightButton = transform.Find("Right").GetComponent<Button>();
+       // leftButton = transform.Find("Left").GetComponent<Button>();
+       // rightButton = transform.Find("Right").GetComponent<Button>();
 
-        leftButton.onClick.AddListener(mapLeft);
-        rightButton.onClick.AddListener(mapRight);
+      //  leftButton.onClick.AddListener(mapLeft);
+
+      //  rightButton.onClick.AddListener(mapRight);
 
 
     }
 
+     void Update()
+    {
+        if(Input.GetKey("left"))
+        {
+            mapLeft();
+        }
+
+        if(Input.GetKey("right"))
+        {
+            mapRight();
+        }
+    }
     void mapLeft()
     {
 
-        gameController.worldGenerator.startDataVis("NULL","NULL",-1);
-
+        gameController.worldGenerator.startDataVis("no","no",-1);
+        System.Threading.Thread.Sleep(100);
+       
+      
+      
     }
+
 
     void mapRight()
     {
-      gameController.worldGenerator.startDataVis("NULL","NULL",1);
+      gameController.worldGenerator.startDataVis("no","no",1);
+        System.Threading.Thread.Sleep(100);
     }
 
     /*   public void dataVisFreeze()

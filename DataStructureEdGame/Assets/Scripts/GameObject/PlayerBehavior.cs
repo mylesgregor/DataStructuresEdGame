@@ -41,6 +41,11 @@ public class PlayerBehavior : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+        if (gameController.checkDataVis())
+            rb2.constraints = RigidbodyConstraints2D.FreezeAll;
+        else
+            rb2.constraints = RigidbodyConstraints2D.FreezeRotation;
+
         float horz = Input.GetAxis("Horizontal");
         float vert = Input.GetAxis("Vertical");
         
