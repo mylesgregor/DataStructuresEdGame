@@ -360,7 +360,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
     {
         if (!gameController.checkDataVis())
             gameController.enableDataVis();
-        
+
 
       if(playerID != "no" && levelID != "no")
       {
@@ -372,15 +372,15 @@ public class WorldGenerationBehavior : MonoBehaviour {
         {
             String[] st = File.ReadAllLines("/Users/CEI_BARNES_7/Desktop/OwenGameStudyData_July16/player_" + savePlayerID +
                                             "/gameLevel_tutorial2_lvl" + saveLevelID + ".csv");
-            Debug.Log(st[currentLineCSV]);
 
-            Debug.Log("Will this work?");
+
+
             int findXIndex = st[currentLineCSV].IndexOf("\"\"logId\"\":\"\"player\"\",\"\"x\"\":", StringComparison.CurrentCulture);
-            Debug.Log(findXIndex);
+
 
 
             int findYIndex = st[currentLineCSV].IndexOf("},\"\"helicopter\"\":{\"\"type\"\":", StringComparison.CurrentCulture);
-            Debug.Log(findYIndex);
+
             string substr = st[currentLineCSV].Substring(findXIndex, findYIndex - findXIndex);
 
             string xValstr = substr.Substring(27, 5); //  find X
@@ -393,25 +393,23 @@ public class WorldGenerationBehavior : MonoBehaviour {
 
             double xVal = Double.Parse(xValstr);
             double yVal = Double.Parse(yValstr);
-            Debug.Log(xVal);
-            Debug.Log(yVal);
-            Debug.Log(substr);
 
-    
-                if (currentLineCSV + movement >= 0 && currentLineCSV + movement < st.Length ) 
+
+
+                if (currentLineCSV + movement >= 0 && currentLineCSV + movement < st.Length )
                 {
-                    Debug.Log("Test");
+                    
                     currentLineCSV += movement;
 
 
                 Vector2 loc = new Vector2((float)(xVal), (float)(yVal));
                 gameController.playerRef.position = loc;
-                
+
 
 
             }
 
-         
+
 
             if (st[currentLineCSV].IndexOf("won at time", StringComparison.CurrentCulture) != -1)
 
@@ -434,9 +432,9 @@ public class WorldGenerationBehavior : MonoBehaviour {
             Debug.Log(e.Message);
         }
 
-      
 
-      
+
+
     }
 
      string getBetween(string strSource, string strStart, string strEnd)

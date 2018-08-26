@@ -20,7 +20,9 @@ public GameController gameController;
 
   private Button leftButton;
   private Button rightButton;
- 
+
+  private bool busy;
+
 
 
 	void Start () {
@@ -39,12 +41,12 @@ public GameController gameController;
 
      void Update()
     {
-        if(Input.GetKey("left"))
+        if(Input.GetKey("left") && !busy)
         {
             mapLeft();
         }
 
-        if(Input.GetKey("right"))
+        if(Input.GetKey("right") && !busy)
         {
             mapRight();
         }
@@ -52,18 +54,23 @@ public GameController gameController;
     void mapLeft()
     {
 
+        busy = true;
         gameController.worldGenerator.startDataVis("no","no",-1);
-        System.Threading.Thread.Sleep(100);
-       
-      
-      
+        System.Threading.Thread.Sleep(50);
+        busy = false;
+
+
+
+
     }
 
 
     void mapRight()
     {
+      busy = true;
       gameController.worldGenerator.startDataVis("no","no",1);
-        System.Threading.Thread.Sleep(100);
+        System.Threading.Thread.Sleep(50);
+        busy = false;
     }
 
     /*   public void dataVisFreeze()
