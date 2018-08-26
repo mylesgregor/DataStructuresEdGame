@@ -90,7 +90,7 @@ public class LoginPanelBehavior : MonoBehaviour {
         gameCanvas.gameObject.SetActive(true);
         menuCanvas.gameObject.SetActive(false);
         gameCanvas.transform.GetChild(7).gameObject.SetActive(false);
-      //  DataVisControl.gameObject.SetActive(false);
+
         gameController.loggingManager.currentPlayerID = -1;
         gameController.instructionScreenBehavior.ensureInstructionPanelReferences();
         gameController.instructionScreenBehavior.revealPlatformsForLevels(gameController.worldGenerator.levelFileIndex);
@@ -120,10 +120,16 @@ public class LoginPanelBehavior : MonoBehaviour {
       gameCanvas.gameObject.SetActive(true);
       menuCanvas.gameObject.SetActive(false);
       gameController.loggingManager.currentPlayerID = -1;
+
+      gameController.worldGenerator.levelFileIndex = int.Parse(passwordInputField.text)-1;
+
       gameController.instructionScreenBehavior.ensureInstructionPanelReferences();
       gameController.instructionScreenBehavior.revealPlatformsForLevels(gameController.worldGenerator.levelFileIndex);
-      loggingManager.sendLogToServer("Logged in with debug login");
+      loggingManager.sendLogToServer("Logged in with dataVis login");
       gameController.worldGenerator.ManualStartGenerator();
+
+
+
 
       if (!dataVisPressed) {
           dataVisPressed = true;

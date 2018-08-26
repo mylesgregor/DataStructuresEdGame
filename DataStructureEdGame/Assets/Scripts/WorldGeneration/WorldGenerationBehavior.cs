@@ -47,6 +47,10 @@ public class WorldGenerationBehavior : MonoBehaviour {
     private string savePlayerID;
     private string saveLevelID;
 
+    private string[] st;
+
+
+
     public void ManualStartGenerator()
     {
         if (generateWorld)
@@ -358,20 +362,27 @@ public class WorldGenerationBehavior : MonoBehaviour {
 // backwards = -1, forward = 1
     public void startDataVis(string playerID, string levelID, int movement)
     {
-        if (!gameController.checkDataVis())
-            gameController.enableDataVis();
 
 
-      if(playerID != "no" && levelID != "no")
+
+
+
+      if(playerID != "" && levelID != "")
       {
       savePlayerID = playerID;
       saveLevelID = levelID;
-    }
+      }
 
         try
         {
-            String[] st = File.ReadAllLines("/Users/CEI_BARNES_7/Desktop/OwenGameStudyData_July16/player_" + savePlayerID +
+
+
+          if(!gameController.checkDataVis())
+          {
+             st = File.ReadAllLines("/Users/CEI_BARNES_7/Desktop/OwenGameStudyData_July16/player_" + savePlayerID +
                                             "/gameLevel_tutorial2_lvl" + saveLevelID + ".csv");
+            gameController.enableDataVis();
+          }
 
 
 
@@ -398,7 +409,7 @@ public class WorldGenerationBehavior : MonoBehaviour {
 
                 if (currentLineCSV + movement >= 0 && currentLineCSV + movement < st.Length )
                 {
-                    
+
                     currentLineCSV += movement;
 
 
@@ -414,7 +425,11 @@ public class WorldGenerationBehavior : MonoBehaviour {
             if (st[currentLineCSV].IndexOf("won at time", StringComparison.CurrentCulture) != -1)
 
             {
-                gameController.disableDataVis();
+              Debug.Log("change lvl");
+              gameController.disableDataVis();
+              gameController.worldGenerator.levelFileIndex = gameController.worldGenerator.levelFileIndex + 1;
+
+              gameController.worldGenerator.resetLevel();
 
                 int lvl = int.Parse(saveLevelID);
                 saveLevelID = (lvl + 1).ToString();
@@ -434,8 +449,9 @@ public class WorldGenerationBehavior : MonoBehaviour {
 
 
 
-
     }
+
+
 
      string getBetween(string strSource, string strStart, string strEnd)
     {
