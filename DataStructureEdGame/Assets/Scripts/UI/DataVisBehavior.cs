@@ -6,6 +6,7 @@ using Assets.Scripts.WorldGeneration;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System.Threading;
 
 /**
  * A left and right button used to map through various frames in logging visualizaton
@@ -27,16 +28,6 @@ public GameController gameController;
 
 
 	void Start () {
-
-
-
-
-       // leftButton = transform.Find("Left").GetComponent<Button>();
-       // rightButton = transform.Find("Right").GetComponent<Button>();
-
-      //  leftButton.onClick.AddListener(mapLeft);
-
-      //  rightButton.onClick.AddListener(mapRight);
 
 
     }
@@ -66,15 +57,19 @@ public GameController gameController;
 
 
 
+
     }
 
 
     void mapRight()
     {
+
       busy = true;
       gameController.worldGenerator.startDataVis("","",1);
-        System.Threading.Thread.Sleep(60);
-        busy = false;
+      System.Threading.Thread.Sleep(60);
+      busy = false;
+
+
     }
 
     /*   public void dataVisFreeze()
