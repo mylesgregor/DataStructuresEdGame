@@ -5,18 +5,18 @@ using UnityEngine.UI;
 using System;
 
 public class PlatformBehavior : MonoBehaviour
-{ 
+{
     public GameController gameController; // reference to the very important game controller.
-    
+
     public Sprite defaultSprite; // initial sprite
     public Sprite phasedOutSprite; // sprite to display when phased out.
 
     public bool isInLevel; // whether this platform has been placed in the level yet or not
     public bool phasedOut; // if not Phased Out, then Solid.
-    
+
     /**
      * Make this platform look faded for the add platform mechanic
-     */ 
+     */
     public void renderAsFadedPreview()
     {
         GetComponent<SpriteRenderer>().sprite = phasedOutSprite;
@@ -24,7 +24,9 @@ public class PlatformBehavior : MonoBehaviour
     }
 
     /**
-     * Update the sprite based on the isHidden, isPhasedOut values. 
+     *
+
+      the sprite based on the isHidden, isPhasedOut values.
      */
     public void updateRenderAndState()
     {
@@ -35,7 +37,7 @@ public class PlatformBehavior : MonoBehaviour
             {
                 GetComponent<SpriteRenderer>().sprite = phasedOutSprite;
             }
-            GetComponent<BoxCollider2D>().isTrigger = true; // so player can pass through it.   
+            GetComponent<BoxCollider2D>().isTrigger = true; // so player can pass through it.
         }
         else // solid
         {
@@ -45,7 +47,7 @@ public class PlatformBehavior : MonoBehaviour
             }
             GetComponent<BoxCollider2D>().isTrigger = false;
         }
-        
+
         bool hide = true;
         foreach (LinkBehavior lb in GetComponent<ConnectableEntityBehavior>().incomingConnectionLinks)
         {
@@ -96,7 +98,7 @@ public class PlatformBehavior : MonoBehaviour
     {
         return phasedOut;
     }
-    
+
     public void setValueBlockText(string s)
     {
         if (GetComponent<ContainerEntityBehavior>().GetChildComponent<ValueBehavior>() != null)

@@ -22,9 +22,19 @@ namespace Assets.Scripts.WorldGeneration
         public BlockJSON player;
         public BlockJSON helicopter;
 
+
         public string SaveString()
         {
             return JsonUtility.ToJson(this);
         }
+
+        public void setData(LogMsgRepresentation data)
+        {
+          linkBlockPart = data.linkBlockPart;
+          platformPart = data.platformPart;
+          player = data.player;
+          helicopter = data.helicopter;
+        }
+
     }
 }
